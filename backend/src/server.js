@@ -1,36 +1,25 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const { PrismaClient } = require('@prisma/client');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import questionRoutes from './routes/questionRoutes.js';
+import resultRoutes from './routes/resultRoutes.js';
 
-const authRoutes = require('./routes/auth');
-const questionRoutes = require('./routes/questions');
-const resultRoutes = require('./routes/results');
+dotenv.config();
 
 const app = express();
-const prisma = new PrismaClient();
+const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
 app.use('/api/questions', questionRoutes);
-app.use('/api/results', resultRoutes);
+app.use('/api/result', resultRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Server is running' });
 });
-
-const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-
-module.exports = app;
