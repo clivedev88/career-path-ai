@@ -3,18 +3,15 @@ import axios from 'axios';
 import Home from './pages/Home';
 import QuestionnairePage from './pages/QuestionnairePage';
 import ResultPage from './pages/ResultPage';
+import LoadingSpinner from './components/LoadingSpinner';
 
-// Configuração do axios
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  timeout: 60000 // 60 segundos para IA
 });
 
 function App() {
-  const [stage, setStage] = useState('home');
+  const [stage, setStage] = useState('loading'); // Começa carregando
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState('');
@@ -22,18 +19,20 @@ function App() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    loadQuestions();
+    loadQuestionsFromAI();
   }, []);
 
-  const loadQuestions = async () => {
+  const loadQuestionsFromAI = async () => {
     try {
-      console.log('Carregando perguntas...');
+      console.log('🎯 Solicitando perguntas à IA...');
       const response = await api.get('/questions');
-      console.log('Perguntas carregadas:', response.data);
+      console.log('✅ Perguntas geradas pela IA:', response.data);
       setQuestions(response.data.questions);
+      setStage('home');
     } catch (error) {
-      console.error('Erro detalhado:', error);
-      setError('Não foi possível conectar ao servidor. Certifique-se que o backend está rodando na porta 5000');
+      console.error('Erro:', error);
+      setError('Erro ao carregar perguntas da IA. Verifique o backend.');
+      setStage('home');
     }
   };
 
@@ -52,31 +51,19 @@ function App() {
     setError('');
     
     try {
-      console.log('Enviando respostas:', { answers, questions });
-      
+      console.log('🤖 Enviando respostas para análise da IA...');
       const response = await api.post('/result', {
         answers,
         questions
       });
       
-      console.log('Resposta recebida:', response.data);
-      
       if (response.data.success) {
         setResult(response.data.analysis);
         setStage('result');
-      } else {
-        setError(response.data.error || 'Erro ao gerar diagnóstico');
       }
     } catch (error) {
-      console.error('Erro detalhado:', error);
-      
-      if (error.code === 'ERR_NETWORK') {
-        setError('❌ Erro de conexão: Verifique se o backend está rodando na porta 5000');
-      } else if (error.response) {
-        setError(`❌ Erro do servidor: ${error.response.data.error || error.response.statusText}`);
-      } else {
-        setError(`❌ Erro: ${error.message}`);
-      }
+      console.error('Erro:', error);
+      setError('Erro ao gerar diagnóstico. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -89,22 +76,14 @@ function App() {
     setError('');
   };
 
-  if (error && stage === 'home') {
-    return (
-      <div className="error-container">
-        <div className="error-card">
-          <h2>🔌 Erro de Conexão</h2>
-          <p>{error}</p>
-          <button onClick={() => window.location.reload()}>Tentar Novamente</button>
-        </div>
-      </div>
-    );
+  if (stage === 'loading') {
+    return <LoadingSpinner text="Gerando perguntas personalizadas com IA..." />;
   }
 
   return (
     <div className="app">
       {stage === 'home' && (
-        <Home onStart={startQuiz} />
+        <Home onStart={startQuiz} error={error} />
       )}
       
       {stage === 'quiz' && questions.length > 0 && (
