@@ -8,7 +8,15 @@ function ResultPage({ result, onRestart }) {
         <div className="result-badge">✦ Seu diagnóstico personalizado</div>
         
         <div className="result-content">
-          <ReactMarkdown>{result}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              h1: ({node, ...props}) => <h1 style={{color: '#fbbf24'}} {...props} />,
+              h2: ({node, ...props}) => <h2 style={{color: '#fbbf24', marginTop: '24px'}} {...props} />,
+              strong: ({node, ...props}) => <strong style={{color: '#fbbf24'}} {...props} />
+            }}
+          >
+            {result}
+          </ReactMarkdown>
         </div>
         
         <div className="result-actions">

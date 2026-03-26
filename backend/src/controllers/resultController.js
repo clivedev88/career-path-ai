@@ -1,4 +1,4 @@
-import { analyzeCareerProfile } from '../services/openAIService.js';
+import { analyzeCareerProfile } from '../services/geminiService.js';
 
 export const generateResult = async (req, res) => {
   try {

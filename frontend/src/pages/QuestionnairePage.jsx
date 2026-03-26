@@ -7,10 +7,13 @@ function QuestionnairePage({ questions, answers, onAnswer, onSubmit, loading }) 
   
   const currentQuestion = questions[currentIndex];
   const isLast = currentIndex === questions.length - 1;
+  const currentAnswer = answers[currentQuestion?.id] || '';
   
   useEffect(() => {
-    setProgress(((currentIndex + 1) / questions.length) * 100);
-  }, [currentIndex]);
+    if (questions.length > 0) {
+      setProgress(((currentIndex + 1) / questions.length) * 100);
+    }
+  }, [currentIndex, questions]);
   
   const handleNext = () => {
     if (isLast) {
@@ -26,7 +29,9 @@ function QuestionnairePage({ questions, answers, onAnswer, onSubmit, loading }) 
     }
   };
   
-  if (!currentQuestion) return null;
+  if (!currentQuestion) {
+    return <div className="loading">Carregando perguntas...</div>;
+  }
   
   return (
     <div className="quiz-container">
@@ -41,7 +46,7 @@ function QuestionnairePage({ questions, answers, onAnswer, onSubmit, loading }) 
         
         <Question
           question={currentQuestion}
-          value={answers[currentQuestion.id] || ''}
+          value={currentAnswer}
           onChange={(value) => onAnswer(currentQuestion.id, value)}
         />
         
@@ -55,9 +60,9 @@ function QuestionnairePage({ questions, answers, onAnswer, onSubmit, loading }) 
           <button 
             className="btn-next"
             onClick={handleNext}
-            disabled={!answers[currentQuestion.id]}
+            disabled={!currentAnswer || loading}
           >
-            {isLast ? (loading ? 'Analisando...' : 'Ver resultado →') : 'Próxima →'}
+            {loading ? 'Analisando...' : (isLast ? 'Ver resultado →' : 'Próxima →')}
           </button>
         </div>
       </div>
