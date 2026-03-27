@@ -16,7 +16,8 @@ const PORT = process.env.PORT || 5000;
 // }));
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://career-path-ai-liart.vercel.app'],
+//   origin: ['http://localhost:3000', 'https://career-path-ai-liart.vercel.app'],
+  origin: ['http://localhost:3000', 'https://career-path-ai-git-main-clivekif-6951s-projects.vercel.app/'],
   
   credentials: true,
 }));
