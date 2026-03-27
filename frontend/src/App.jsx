@@ -6,9 +6,11 @@ import ResultPage from './pages/ResultPage';
 import LoadingSpinner from './components/LoadingSpinner';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+//   baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://career-path-ai-1.onrender.com',
   timeout: 60000 // 60 segundos para IA
 });
+
 
 function App() {
   const [stage, setStage] = useState('loading'); // Começa carregando
