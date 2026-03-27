@@ -7,7 +7,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 
 const api = axios.create({
 //   baseURL: 'http://localhost:5000/api',
-  baseURL: 'https://career-path-ai-1.onrender.com',
+  baseURL: 'https://career-path-ai-1.onrender.com/api',
   timeout: 60000 // 60 segundos para IA
 });
 
